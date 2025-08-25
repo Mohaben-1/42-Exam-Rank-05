@@ -1,0 +1,16 @@
+Assignment name: bigint
+Expected files: bigint.hpp, bigint.cpp
+
+A bignumber is an object representing an arbitrary precision number. This is useful when you 
+want to store a number bigger than SIZE_MAX without any loss of precision. This can be archieved 
+by storing a string or an array, containing parts of the number. Create a class bigint that 
+will store arbitrary precision unsigned integers and where addition, increment, comparisions 
+and bitshifts are defined, where bitshift should shift with respect to the decimal basis (e.g. 43 << 3 == 43000).
+The provided main should be executable.
+
+STUDENT NOTE: Although the subject says we only need to implement addition, increment and comparisions, grademe will not be able to compile, if
+	bigint bigint::operator-(const bigint &first, const bigint &second);
+is not implemented, since lines like
+	bigint c(43);
+	std::cout << c - c << std::endl;
+are in their test script. But a dummy implementation that always return a bigint with value 0 is sufficient to pass.
