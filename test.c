@@ -37,7 +37,13 @@ void	game_of_life(char **board, int width, int height)
 	{
 		new_board[i] = malloc(width + 1);
 		if (!new_board[i])
+		{
+			// free already allocated rows to avoid leak
+			for (int k = 0; k < i; k++)
+				free(new_board[k]);
+			free(new_board);
 			return ;
+		}
 		for (int j = 0; j < width; j++)
 		{
 			int neighbors = count_neighbors(board, width, height, j, i);
@@ -83,24 +89,28 @@ int	main(int ac, char **av)
 	int		height = atoi(av[2]);
 	int		iterations = atoi(av[3]);
 	char	**board = malloc(height * sizeof(char *));
-
 	if (!board)
 		return (1);
+
 	for (int i = 0; i < height; i++)
 	{
 		board[i] = malloc(width + 1);
 		if (!board[i])
+		{
+			free_board(board, i);
 			return (1);
+		}
 		for (int j = 0; j < width; j++)
 			board[i][j] = ' ';
 		board[i][width] = '\0';
 	}
+
 	int		pen_down = 0;
 	int		x = 0;
 	int		y = 0;
 	char	cmd;
 
-	while (read(0, &cmd, 1))
+	while (read(0, &cmd, 1) > 0)
 	{
 		if (cmd == 'x')
 		{
@@ -108,31 +118,22 @@ int	main(int ac, char **av)
 			if (pen_down && x >= 0 && x < width && y >= 0 && y < height)
 				board[y][x] = '0';
 		}
-		else if (cmd == 'w')
-		{
-			if (y > 0)
-				y--;
-		}
-		else if (cmd == 's')
-		{
-			if (y < height - 1)
-				y++;
-		}
-		else if (cmd == 'a')
-		{
-			if (x > 0)
-				x--;
-		}
-		else if (cmd == 'd')
-		{
-			if (x < width - 1)
-				x++;
-		}
+		else if (cmd == 'w' && y > 0)
+			y--;
+		else if (cmd == 's' && y < height - 1)
+			y++;
+		else if (cmd == 'a' && x > 0)
+			x--;
+		else if (cmd == 'd' && x < width - 1)
+			x++;
+
 		if (pen_down && x >= 0 && x < width && y >= 0 && y < height)
 			board[y][x] = '0';
 	}
+
 	for (int i = 0; i < iterations; i++)
 		game_of_life(board, width, height);
+
 	print_board(board, width, height);
 	free_board(board, height);
 	return (0);
