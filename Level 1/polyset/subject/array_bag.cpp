@@ -3,19 +3,19 @@
 
 array_bag::array_bag() : data(0), size(0) {}
 
-array_bag::array_bag(const array_bag &oth) {
-	this->data = new int[oth.size];
-	for (int i = 0; i < oth.size; i++)
-		this->data[i] = oth.data[i];
-	this->size = oth.size;
+array_bag::array_bag(const array_bag &other) {
+	this->data = new int[other.size];
+	for (int i = 0; i < other.size; i++)
+		this->data[i] = other.data[i];
+	this->size = other.size;
 }
 
-array_bag &array_bag::operator=(const array_bag &oth) {
+array_bag &array_bag::operator=(const array_bag &other) {
 	this->clear();
-	this->data = new int[oth.size];
-	for (int i = 0; i < oth.size, i++)
-		this->data[i] = oth.data[i];
-	this->size = oth.size;
+	this->data = new int[other.size];
+	for (int i = 0; i < other.size; i++)
+		this->data[i] = other.data[i];
+	this->size = other.size;
 	return *this;
 }
 
@@ -25,9 +25,8 @@ array_bag::~array_bag() {
 
 void array_bag::insert(int val) {
 	int *tmp = new int[size + 1];
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
 		tmp[i] = this->data[i];
-	}
 	tmp[this->size] = val;
 	delete this->data;
 	this->data = tmp;
@@ -36,7 +35,7 @@ void array_bag::insert(int val) {
 
 void array_bag::insert(int *a, int s) {
 	for (int i = 0; i < s; i++)
-		this->insert(a[i]);	
+		this->insert(a[i]);
 }
 
 void array_bag::print() const {
