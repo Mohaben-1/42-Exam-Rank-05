@@ -90,7 +90,10 @@ int	main(int ac, char **av)
 	{
 		board[i] = malloc(width + 1);
 		if (!board[i])
+		{
+			free_board(board, i);
 			return (1);
+		}
 		for (int j = 0; j < width; j++)
 			board[i][j] = ' ';
 		board[i][width] = '\0';
@@ -108,26 +111,14 @@ int	main(int ac, char **av)
 			if (pen_down && x >= 0 && x < width && y >= 0 && y < height)
 				board[y][x] = '0';
 		}
-		else if (cmd == 'w')
-		{
-			if (y > 0)
-				y--;
-		}
-		else if (cmd == 's')
-		{
-			if (y < height - 1)
-				y++;
-		}
-		else if (cmd == 'a')
-		{
-			if (x > 0)
-				x--;
-		}
-		else if (cmd == 'd')
-		{
-			if (x < width - 1)
-				x++;
-		}
+		else if (cmd == 'w' && y > 0)
+			y--;
+		else if (cmd == 's' && y < height - 1)
+			y++;
+		else if (cmd == 'a' && x > 0)
+			x--;
+		else if (cmd == 'd' && x < width - 1)
+			x++;
 		if (pen_down && x >= 0 && x < width && y >= 0 && y < height)
 			board[y][x] = '0';
 	}
