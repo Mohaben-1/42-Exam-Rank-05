@@ -1,130 +1,83 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-void	print_board(char **board, int width, int height)
+int main(int ac, char **av)
 {
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-			write(1, &board[i][j], 1);
-		write(1, "\n", 1);
-	}
-}
+    if (ac != 4)
+        return 1;
+    int weight = atoi(av[1]);
+    int height = atoi(av[2]);
+    int iterators = atoi(av[3]);
+    int x = 1;
+    int y = 1;
+    char c;
+    int print = 0;
+    int arr[2][height + 2][weight + 2];
+    for(int i =0;i < 2; i++)
+    {
+        for(int j = 0; j < height + 2; j++)
+        {
+            for(int k = 0; k < weight + 2;k++)
+                arr[i][j][k] = 0;
+        }
+    }
+    while(read(0, &c, 1) >0)
+    {
+        if (c == 'w' && y > 1)
+            y--;
+        else if (c == 'a' && x > 1)
+            x--;
+        else if (c == 'd' && x < weight)
+            x++;
+        else if (c == 's' && y < height)
+            y++;
+        else if (c == 'x')
+                print = !print;
+        if (print)
+            arr[0][y][x] = 1;
 
-int	count_neighbors(char **board, int width, int height, int x, int y)
-{
-	int	count = 0;
-
-	for (int i = y - 1; i <= y + 1; i++)
-	{
-		for (int j = x - 1; j <= x + 1; j++)
-		{
-			if (i == y && j == x)
-				continue ;
-			if (i >= 0 && i < height && j >= 0 && j < width && board[i][j] == '0')
-				count++;
-		}
-	}
-	return (count);
-}
-
-void	game_of_life(char **board, int width, int height)
-{
-	char **new_board = malloc(height * sizeof(char *));
-	if (!new_board)
-		return ;
-	for (int i = 0; i < height; i++)
-	{
-		new_board[i] = malloc(width + 1);
-		if (!new_board[i])
-			return ;
-		for (int j = 0; j < width; j++)
-		{
-			int neighbors = count_neighbors(board, width, height, j, i);
-			if (board[i][j] == '0')
-			{
-				if (neighbors == 2 || neighbors == 3)
-					new_board[i][j] = '0';
-				else
-					new_board[i][j] = ' ';
-			}
-			else
-			{
-				if (neighbors == 3)
-					new_board[i][j] = '0';
-				else
-					new_board[i][j] = ' ';
-			}
-		}
-		new_board[i][width] = '\0';
-	}
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-			board[i][j] = new_board[i][j];
-		free(new_board[i]);
-	}
-	free(new_board);
-}
-
-void	free_board(char **board, int size)
-{
-	for (int i = 0; i < size; i++)
-		free(board[i]);
-	free(board);
-}
-
-int	main(int ac, char **av)
-{
-	if (ac != 4)
-		return (1);
-
-	int		width = atoi(av[1]);
-	int		height = atoi(av[2]);
-	int		iterations = atoi(av[3]);
-	char	**board = malloc(height * sizeof(char *));
-
-	if (!board)
-		return (1);
-	for (int i = 0; i < height; i++)
-	{
-		board[i] = malloc(width + 1);
-		if (!board[i])
-		{
-			free_board(board, i);
-			return (1);
-		}
-		for (int j = 0; j < width; j++)
-			board[i][j] = ' ';
-		board[i][width] = '\0';
-	}
-	int		pen_down = 0;
-	int		x = 0;
-	int		y = 0;
-	char	cmd;
-
-	while (read(0, &cmd, 1))
-	{
-		if (cmd == 'x')
-		{
-			pen_down = !pen_down;
-			if (pen_down && x >= 0 && x < width && y >= 0 && y < height)
-				board[y][x] = '0';
-		}
-		else if (cmd == 'w' && y > 0)
-			y--;
-		else if (cmd == 's' && y < height - 1)
-			y++;
-		else if (cmd == 'a' && x > 0)
-			x--;
-		else if (cmd == 'd' && x < width - 1)
-			x++;
-		if (pen_down && x >= 0 && x < width && y >= 0 && y < height)
-			board[y][x] = '0';
-	}
-	for (int i = 0; i < iterations; i++)
-		game_of_life(board, width, height);
-	print_board(board, width, height);
-	free_board(board, height);
-	return (0);
+    }
+    for(int iter = 0 ; iter < iterators; iter++)
+    {
+        for(int j =1; j <= height ; j++)
+        {
+            for(int k = 1; k <= weight ;k++)
+            {
+                int n = 0;
+                for(int h = -1; h <= 1 ; h++)
+                {
+                    for(int w = -1; w <= 1; w++)
+                    {
+                        if (!(w == 0 && h == 0))
+                            n+= arr[iter%2][h + j][w + k];
+                    }
+                }
+                if (arr[iter%2][j][k] == 1)
+                {
+                    if (n == 2 || n == 3)
+                        arr[(iter + 1)%2][j][k] = 1;
+                    else
+                        arr[(iter + 1)%2][j][k] = 0;
+                }
+                else
+                {
+                    if (n == 3)
+                        arr[(iter + 1)%2][j][k] = 1;
+                    else
+                        arr[(iter + 1)%2][j][k] = 0;
+                }
+            }
+        }
+    }
+    for(int i = 1; i <=height ;i++)
+    {
+        for(int j = 1; j <= weight; j++)
+        {
+            if (arr[iterators% 2][i][j] == 0)
+                putchar(' ');
+            else
+                putchar('O');
+        }
+        putchar('\n');
+    }
 }
