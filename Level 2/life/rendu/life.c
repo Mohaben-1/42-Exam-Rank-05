@@ -1,10 +1,6 @@
 #include <unistd.h>
 #include <stdlib.h>
-
-void	ft_putchar(char c)
-{
-	write(1, &c, 1);
-}
+#include <stdio.h>
 
 int	main(int ac, char **av)
 {
@@ -26,11 +22,16 @@ int	main(int ac, char **av)
 
 	while (read(0, &c, 1) > 0)
 	{
-		if (c == 'w' && y > 1)			y--;
-		else if (c == 's' && y < height)	y++;
-		else if (c == 'a' && x > 1)		x--;
-		else if (c == 'd' && x < width)	x++;
-		else if (c == 'x')				pen = !pen;
+		if (c == 'w' && y > 1)
+			y--;
+		else if (c == 's' && y < height)
+			y++;
+		else if (c == 'a' && x > 1)	
+			x--;
+		else if (c == 'd' && x < width)
+			x++;
+		else if (c == 'x')
+			pen = !pen;
 		if (pen)
 			grid[0][y][x] = 1;
 	}
@@ -45,9 +46,11 @@ int	main(int ac, char **av)
 			{
 				int	n = 0;
 				for (int dy = -1; dy <= 1; dy++)
+				{
 					for (int dx = -1; dx <= 1; dx++)
 						if (!(dx == 0 && dy == 0))
 							n += grid[cur][i + dy][j + dx];
+				}
 				if (grid[cur][i][j] == 1)
 					grid[next][i][j] = (n == 2 || n == 3);
 				else
@@ -62,10 +65,10 @@ int	main(int ac, char **av)
 		for (int j = 1; j <= width; j++)
 		{
 			if (grid[final][i][j])
-				ft_putchar('O');
+				putchar('O');
 			else
-				ft_putchar(' ');
+				putchar(' ');
 		}
-		ft_putchar('\n');
+		putchar('\n');
 	}
 }
