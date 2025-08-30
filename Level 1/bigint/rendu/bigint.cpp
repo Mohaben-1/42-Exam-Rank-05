@@ -1,58 +1,98 @@
 #include "bigint.hpp"
-#include <algorithm>
 
-bigint::bigint() : number("0") {}
-
-bigint::bigint(size_t num) : number(std::to_string(num)) {}
-
-bigint::bigint(const std::string& str) : number(str) {}
-
-bigint::bigint(const bigint& other) : number(other.number) {}
-
-bigint& bigint::operator=(const bigint& other)
+void	bigint::trim()
 {
-	if (this != &other)
-		number = other.number;
-	return (*this);
+	while (digits.size() > 1 && digits.back() == 0)
+		digits.pop_back();
 }
 
-std::string bigint::addstr(const std::string& num1, const std::string& num2) const
+int	bigint::to_int() const
 {
-	std::string result;
-	int			carry = 0;
-	int			sum = 0;
-	int			i = num1.size() - 1;
-	int			j = num2.size() - 1;
+	long long	res = 0;
 
-	while (i >= 0 || j >= 0 || carry)
+	for (size_t i = 0; i < digits.size(); i++)
 	{
-		sum = carry;
-		if (i >= 0)
-			sum += num1[i--] - '0';
-		if (j >= 0)
-			sum += num2[j--] - '0';
-		carry = sum / 10;
-		result.push_back((sum % 10) + '0');
+		res = res * 10 + digits[i];
+		if (res > INT_MAX)
+			return (INT_MAX);
 	}
-	std::reverse(result.begin(), result.end());
-	return (result);
+	return ((int)res);
 }
 
-bigint	bigint::operator+(const bigint& other) const
+bigint::bigint() : digits(1, 0) {}
+
+bigint::bigint(unsigned long long n)
 {
-	return (bigint(addstr(number, other.number)));
+	if (n == 0)
+		digits.push_back(0);
+	while (n > 0)
+	{
+		digits.push_back(n % 10);
+		n /= 10;
+	}
+}
+		
+bigint::bigint(const std::string& s)
+{
+	for (int i = s.size() - 1; i >= 0; i--)
+	{
+		if (std::isdigit(s[i]))
+			digits.push_back(s[i] - '0');
+	}
+	if (digits.empty())
+		digits.push_back(0);
+	trim();
 }
 
-bigint	bigint::operator-(const bigint& other) const
-{
-	(void)other;
-	return (bigint(0));
-}
+bigint::bigint(const bigint& copy) : digits(copy.digits) {}
 
-bigint&	bigint::operator+=(const bigint& other)
+bigint&	bigint::operator=(const bigint& copy)
 {
-	number = (std::string)addstr(number, other.number);
+	if (this != &copy)
+		digits = copy.digits;
 	return (*this);
+}
+
+bigint::~bigint() {}
+
+std::ostream&	operator<<(std::ostream& os, const bigint& b)
+{
+	for (int i = b.digits.size() - 1; i >= 0; i--)
+		os << b.digits[i];
+	return (os);
+}
+
+bigint	bigint::operator+(const bigint& b) const
+{
+	bigint	res;
+	int		carry = 0;
+	size_t	size = std::max(digits.size(), b.digits.size());
+
+	res.digits.clear();
+	for (size_t i = 0; i < size || carry; i++)
+	{
+		int	sum = carry;
+		if (i < digits.size())
+			sum += digits[i];
+		if (i < b.digits.size())
+			sum += b.digits[i];
+		res.digits.push_back(sum % 10);
+		carry = sum / 10;
+	}
+	res.trim();
+	return (res);
+}
+
+bigint&	bigint::operator+=(const bigint& b)
+{
+	*this = *this + b;
+	return (*this);
+}
+
+bigint	bigint::operator-(const bigint& b) const
+{
+	(void)b;
+	return (bigint(0));
 }
 
 bigint&	bigint::operator++()
@@ -68,81 +108,101 @@ bigint	bigint::operator++(int)
 	return (tmp);
 }
 
-bigint&	bigint::operator--()
+bigint	bigint::operator<<(const bigint& b) const
 {
-	return (*this);
+	bigint	tmp(*this);
+	tmp <<= b;
+	return (tmp);
 }
 
-bigint	bigint::operator--(int)
+bigint	bigint::operator<<(int shift) const
 {
-	return (*this);
-}
-
-bigint	bigint::operator<<(size_t shift)const
-{
-	return (bigint(number + std::string(shift, '0')));
-}
-
-bigint	bigint::operator>>(size_t shift)const
-{
-	if (shift >= number.size())
+	if (*this == bigint(0))
 		return (bigint(0));
-	return (bigint(number.substr(0, number.size() - shift)));
+	bigint	res  = *this;
+	res.digits.insert(res.digits.begin(), shift, 0);
+	return (res);
 }
 
-bigint&	bigint::operator<<=(size_t shift)
+bigint	bigint::operator>>(const bigint& b) const
+{
+	bigint	tmp(*this);
+	tmp >>= b;
+	return (tmp);
+}
+
+bigint	bigint::operator>>(int shift) const
+{
+	bigint	res = *this;
+	if (shift >= (int)res.digits.size())
+		return (bigint(0));
+	res.digits.erase(res.digits.begin(), res.digits.begin() + shift);
+	res.trim();
+	return (res);
+}
+
+bigint&	bigint::operator<<=(int shift)
 {
 	*this = *this << shift;
 	return (*this);
 }
 
-bigint& bigint::operator>>=(size_t shift)
+bigint&	bigint::operator<<=(const bigint& b)
+{
+	return (*this <<= b.to_int());
+}
+
+bigint&	bigint::operator>>=(int shift)
 {
 	*this = *this >> shift;
 	return (*this);
 }
 
-bigint& bigint::operator>>=(const bigint& shift)
+bigint&	bigint::operator>>=(const bigint& b)
 {
-	return (*this >>= std::stoull(shift.number));
+	return (*this >>= b.to_int());
 }
 
-bool	bigint::operator==(const bigint& other) const
+bool	bigint::operator==(const bigint& b) const
 {
-	return (number == other.number);
+	if (digits.size() != b.digits.size())
+		return (false);
+	for (size_t i = 0; i < digits.size(); i++)
+	{
+		if (digits[i] != b.digits[i])
+			return (false);
+	}
+	return (true);
 }
 
-bool	bigint::operator!=(const bigint& other) const
+bool	bigint::operator!=(const bigint& b) const
 {
-	return (number != other.number);
+	return (!(*this == b));
 }
 
-bool	bigint::operator<(const bigint& other) const
+bool	bigint::operator<(const bigint& b) const
 {
-	if (number.size() != other.number.size())
-		return (number.size() < other.number.size());
-	return (number < other.number);
+	if (digits.size() != b.digits.size())
+		return (digits.size() < b.digits.size());
+	for (int i = digits.size() - 1; i >= 0; i--)
+	{
+		if (digits[i] != b.digits[i])
+			return (digits[i] < b.digits[i]);
+	}
+	return (false);
 }
 
-bool	bigint::operator>(const bigint& other) const
+bool	bigint::operator<=(const bigint& b) const
 {
-	if (number.size() != other.number.size())
-		return (number.size() > other.number.size());
-	return (number > other.number);
+	return (*this < b || *this == b);
 }
 
-bool	bigint::operator<=(const bigint& other) const
+bool	bigint::operator>(const bigint& b) const
 {
-	return (!(*this > other));
+	return (!(*this <= b));
 }
 
-bool	bigint::operator>=(const bigint& other) const
+bool	bigint::operator>=(const bigint& b) const
 {
-	return (!(*this < other));
-}
-
-std::ostream& operator<<(std::ostream& os, const bigint& b)
-{
-	os << b.number;
-	return (os);
+	return (!(*this < b));
 }

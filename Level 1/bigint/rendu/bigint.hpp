@@ -2,40 +2,46 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 class bigint
 {
 	private:
-		std::string number;
-		std::string addstr(const std::string& num1, const std::string& num2) const;
+		std::vector<int>	digits;
+		void	trim();
+		int		to_int() const;
 	public:
 		bigint();
-		bigint(size_t num);
-		bigint(const std::string& str);
-		bigint(const bigint& other);
-		bigint& operator=(const bigint& other);
+		bigint(unsigned long long n);
+		bigint(const std::string& s);
+		bigint(const bigint& copy);
+		bigint&	operator=(const bigint& copy);
+		~bigint();
 
-		friend std::ostream& operator<<(std::ostream& os, const bigint& b);
+		friend std::ostream&	operator<<(std::ostream& os, const bigint& b);
 
-		bigint	operator+(const bigint& other) const;
-		bigint	operator-(const bigint& other) const;
-		bigint&	operator+=(const bigint& other);
+		bigint	operator+(const bigint& b) const;
+		bigint&	operator+=(const bigint& b);
+
+		bigint	operator-(const bigint& b) const;
 
 		bigint&	operator++();
 		bigint	operator++(int);
-		bigint&	operator--();
-		bigint	operator--(int);
 
-		bigint	operator<<(size_t shift) const;
-		bigint	operator>>(size_t shift) const;
-		bigint&	operator<<=(size_t shift);
-		bigint& operator>>=(size_t shift);
-		bigint& operator>>=(const bigint& shift);
+		bigint	operator<<(const bigint& b) const;
+		bigint	operator<<(int shift) const;
+		bigint	operator>>(const bigint& b) const;
+		bigint	operator>>(int shift) const;
 
-		bool	operator==(const bigint& other) const;
-		bool	operator!=(const bigint& other) const;
-		bool	operator<(const bigint& other) const;
-		bool	operator>(const bigint& other) const;
-		bool	operator<=(const bigint& other) const;
-		bool	operator>=(const bigint& other) const;
+		bigint&	operator<<=(int shift);
+		bigint&	operator<<=(const bigint& b);
+		bigint&	operator>>=(int shift);
+		bigint&	operator>>=(const bigint& b);
+
+		bool	operator==(const bigint& b) const;
+		bool	operator!=(const bigint& b) const;
+		bool	operator<(const bigint& b) const;
+		bool	operator<=(const bigint& b) const;
+		bool	operator>(const bigint& b) const;
+		bool	operator>=(const bigint& b) const;
 };
