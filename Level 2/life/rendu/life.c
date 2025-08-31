@@ -48,7 +48,7 @@ int	main(int ac, char **av)
 				for (int dy = -1; dy <= 1; dy++)
 				{
 					for (int dx = -1; dx <= 1; dx++)
-						if (!(dx == 0 && dy == 0))
+						if (dx != 0 || dy != 0)
 							n += grid[cur][i + dy][j + dx];
 				}
 				if (grid[cur][i][j] == 1)

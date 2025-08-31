@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
 #include <iostream>
+#include <string>
 #include <vector>
 
-class bigint
+class	bigint
 {
 	private:
 		std::vector<int>	digits;
@@ -20,28 +20,30 @@ class bigint
 
 		friend std::ostream&	operator<<(std::ostream& os, const bigint& b);
 
-		bigint	operator+(const bigint& b) const;
-		bigint&	operator+=(const bigint& b);
-
-		bigint	operator-(const bigint& b) const;
-
 		bigint&	operator++();
 		bigint	operator++(int);
 
-		bigint	operator<<(const bigint& b) const;
+		bigint	operator+(const bigint& b) const;
+		bigint	operator-(const bigint& b) const;
+
+		bigint&	operator+=(const bigint& b);
+
 		bigint	operator<<(int shift) const;
-		bigint	operator>>(const bigint& b) const;
+		bigint	operator<<(const bigint& b) const;
+
 		bigint	operator>>(int shift) const;
+		bigint	operator>>(const bigint& b) const;
 
 		bigint&	operator<<=(int shift);
 		bigint&	operator<<=(const bigint& b);
+
 		bigint&	operator>>=(int shift);
 		bigint&	operator>>=(const bigint& b);
 
+		bool	operator<(const bigint& b) const;
+		bool	operator>(const bigint& b) const;
+		bool	operator<=(const bigint& b) const;
+		bool	operator>=(const bigint& b) const;
 		bool	operator==(const bigint& b) const;
 		bool	operator!=(const bigint& b) const;
-		bool	operator<(const bigint& b) const;
-		bool	operator<=(const bigint& b) const;
-		bool	operator>(const bigint& b) const;
-		bool	operator>=(const bigint& b) const;
 };
