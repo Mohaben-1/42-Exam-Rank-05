@@ -120,7 +120,7 @@ bigint	bigint::operator<<(int shift) const
 
 bigint	bigint::operator<<(const bigint& b) const
 {
-	bigint	tmp(*this);
+	bigint	tmp = *this;
 
 	tmp <<= b;
 	return (tmp);
@@ -138,7 +138,7 @@ bigint	bigint::operator>>(int shift) const
 
 bigint	bigint::operator>>(const bigint& b) const
 {
-	bigint tmp(*this);
+	bigint tmp = *this;
 
 	tmp >>= b;
 	return (tmp);
