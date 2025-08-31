@@ -10,6 +10,10 @@ int	main(int ac, char **av)
 	int	width = atoi(av[1]);
 	int	height = atoi(av[2]);
 	int	iterations = atoi(av[3]);
+
+	if (width < 0 || height < 0 || iterations < 0)
+		return (1);
+
 	int	x = 1, y = 1;
 	int	pen = 0;
 	int	grid[2][height + 2][width + 2];
