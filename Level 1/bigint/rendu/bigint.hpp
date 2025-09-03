@@ -24,7 +24,6 @@ class	bigint
 		bigint	operator++(int);
 
 		bigint	operator+(const bigint& b) const;
-		bigint	operator-(const bigint& b) const;
 
 		bigint&	operator+=(const bigint& b);
 

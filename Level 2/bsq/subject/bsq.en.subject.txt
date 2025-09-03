@@ -1,6 +1,6 @@
 Assignment name              : bsq
 Expected files               : *.c *.h
-Allowed functions and globals: malloc, calloc, real`qloc, free, fopen, fclose,
+Allowed functions and globals: malloc, calloc, realloc, free, fopen, fclose,
 getline, fscanf, fputs, fprintf, printf, stdout, stdin
 --------------------------------------------------------------------------------
 

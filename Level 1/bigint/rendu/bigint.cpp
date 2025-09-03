@@ -97,12 +97,6 @@ bigint	bigint::operator+(const bigint& b) const
 	return (res);
 }
 
-bigint	bigint::operator-(const bigint& b) const
-{
-	(void)b;
-	return (bigint(0));
-}
-
 bigint&	bigint::operator+=(const bigint& b)
 {
 	*this = *this + b;

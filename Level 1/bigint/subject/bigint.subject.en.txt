@@ -18,10 +18,3 @@ Your bigint must be printable with the << operator (in base 10) and the output
 should not contain any leading zeros.
 
 You will find a main in this directory that must work with your class.
-
-STUDENT NOTE: Although the subject says we only need to implement addition, increment and comparisions, grademe will not be able to compile, if
-	bigint bigint::operator-(const bigint &first, const bigint &second);
-is not implemented, since lines like
-	bigint c(43);
-	std::cout << c - c << std::endl;
-are in their test script. But a dummy implementation that always return a bigint with value 0 is sufficient to pass.
